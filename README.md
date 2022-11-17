@@ -1,10 +1,7 @@
 
 # Azure Devops Example
 
-Testing Azure Devops tools using `.yaml` pipeline using sample maven project
-
-
-
+Testing Azure Devops tools using `.yaml` pipeline with sample maven project
 
 
 ## Repo Implementation
