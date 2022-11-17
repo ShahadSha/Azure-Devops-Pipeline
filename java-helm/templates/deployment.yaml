@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-helm
+  template:
+    metadata:
+      labels:
+        app: java-helm
+    spec:
+      containers:
+      - name: java-helm
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: "http"
+        - containerPort: 5005
+          name: "debug"

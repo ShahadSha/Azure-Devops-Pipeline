@@ -1,0 +1,24 @@
+#template sample
+
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - template: step.yml
+
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+  - template: step.yml
+
+
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: echo This script runs before the template's steps, only on Windows.
+  - template: step.yml
+  - script: echo This step runs after the template's steps.

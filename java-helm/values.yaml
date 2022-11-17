@@ -1,0 +1,17 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into deployment_helloworld.yaml in templates directory.
+
+image:
+  repository: shahadsha/simpleapp
+  tag: 30
+  pullPolicy: IfNotPresent
+
+args: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

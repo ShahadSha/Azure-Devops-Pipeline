@@ -1,0 +1,74 @@
+trigger:
+- master
+pool:
+  name: 'self'
+  vmImage: 'linux'
+  environment: 'maven'
+stages:
+- stage: build
+  jobs:
+  - job: build
+    steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: 
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+        
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'dockerhub'
+        repository: 'shahadsha/simpleapp'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: '$(Build.BuildId)'
+
+- stage: Deploy
+  jobs:
+  - job: Deployment
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: echo 'Hello world'
+
+    - task: HelmInstaller@0
+      inputs:
+        helmVersion: '2.14.1'
+        installKubectl: true
+    
+    # Either use helm or bash ----------------------------->    
+    # - task: HelmDeploy@0
+    #   inputs:
+    #     connectionType: 'None'
+    #     namespace: 'azure'
+    #     command: 'install'
+    #     chartType: 'FilePath'
+    #     chartPath: 'java-helm'
+    #     releaseName: 'java-helm'
+    #     overrideValues: 'image.tag=$(Build.BuildId)'
+    
+    # - task: HelmDeploy@0
+    #   inputs:
+    #     connectionType: 'None'
+    #     namespace: 'azure'
+    #     command: 'upgrade'
+    #     chartType: 'Name'
+    #     chartName: 'java-helm'
+    #     releaseName: 'java-helm'
+    #     overrideValues: 'image.tag=$(Build.BuildId)'
+    #     recreate: true
+
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          helm install java-helm java-helm
+          helm upgrade java-helm java-helm --set image.tag=$(Build.BuildId)
+    
